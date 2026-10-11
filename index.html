@@ -1,14 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong Game Classic</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b17">
+  <meta name="description" content="A neon-soaked arcade brick breaker.">
+  <title>Neon Breaker — Arcade</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Script -->
-    <script src="script.js"></script>
+  <main class="arcade">
+    <header class="masthead">
+      <a class="wordmark" href="./" aria-label="Neon Breaker home">
+        <span class="wordmark-icon" aria-hidden="true">N</span>
+        <span>NEON<span class="wordmark-accent">BREAKER</span></span>
+      </a>
+      <span class="edition">ARCADE EDITION <span class="status-dot"></span></span>
+    </header>
+
+    <section class="game-layout" aria-label="Neon Breaker arcade game">
+      <aside class="side-panel left-panel" aria-label="Game information">
+        <div class="panel-label">MISSION</div>
+        <p class="mission-copy">Clear the grid.<br>Keep the ball alive.</p>
+        <div class="panel-rule"></div>
+        <div class="panel-label">CONTROLS</div>
+        <div class="control-row"><span class="keycap">←</span><span class="keycap">→</span><span>Move paddle</span></div>
+        <div class="control-row"><span class="keycap wide-key">SPACE</span><span>Launch / pause</span></div>
+        <div class="control-row"><span class="keycap">A</span><span class="keycap">D</span><span>Move paddle</span></div>
+        <div class="panel-rule"></div>
+        <p class="touch-hint">Touch or drag on the playfield to move.</p>
+      </aside>
+
+      <div class="machine">
+        <div class="machine-top">
+          <span class="machine-caption">PLAYER 01</span>
+          <span class="live-indicator" id="game-status"><span class="status-dot"></span><span id="game-status-label">READY</span></span>
+        </div>
+        <div class="hud" aria-label="Game stats">
+          <div class="hud-stat"><span class="hud-label">SCORE</span><span class="hud-value" id="score">000000</span></div>
+          <div class="hud-stat hud-center"><span class="hud-label">STAGE</span><span class="hud-value" id="level">01</span></div>
+          <div class="hud-stat hud-right"><span class="hud-label">LIVES</span><span class="hud-value lives-value" id="lives" aria-label="3 lives">◆ ◆ ◆</span></div>
+        </div>
+        <div class="screen-wrap">
+          <canvas id="game" width="480" height="640" aria-label="Brick breaker game. Use the arrow keys or A and D to move the paddle. Press space to launch or pause."></canvas>
+          <section class="overlay" id="overlay" aria-live="polite">
+            <div class="overlay-card">
+              <div class="overlay-eyebrow" id="overlay-eyebrow">INSERT COIN</div>
+              <h1 id="overlay-title">BREAK<br><span>THE GRID</span></h1>
+              <p id="overlay-copy">A fresh run. A wall of trouble.<br>How far can you get?</p>
+              <button class="start-button" id="start-button" type="button">START GAME <span aria-hidden="true">↗</span></button>
+              <span class="overlay-foot">PRESS SPACE OR TAP TO PLAY</span>
+            </div>
+          </section>
+        </div>
+        <div class="machine-bottom">
+          <span>★ <span id="best-score">BEST 000000</span></span>
+          <span>BUILT FOR ONE MORE ROUND</span>
+        </div>
+      </div>
+
+      <aside class="side-panel right-panel" aria-label="Game options">
+        <div class="panel-label">FIELD NOTES</div>
+        <div class="legend-item"><span class="brick-swatch swatch-coral"></span><span>Standard block</span></div>
+        <div class="legend-item"><span class="brick-swatch swatch-gold"></span><span>Reinforced block</span></div>
+        <div class="legend-item"><span class="brick-swatch swatch-blue"></span><span>Bonus block</span></div>
+        <div class="panel-rule"></div>
+        <p class="side-copy">Reinforced blocks take two hits. Clear every block to unlock the next stage.</p>
+        <div class="panel-rule"></div>
+        <div class="panel-label">SESSION</div>
+        <button class="utility-button" id="pause-button" type="button" aria-label="Pause game" disabled>Ⅱ <span>PAUSE</span></button>
+        <button class="utility-button" id="restart-button" type="button">↻ <span>RESTART</span></button>
+      </aside>
+    </section>
+
+    <footer class="page-footer"><span>NO QUARTERS REQUIRED</span><span>◈ &nbsp; TAKE A BREATH. THEN BREAK A FEW MORE.</span></footer>
+  </main>
+  <script src="script.js"></script>
 </body>
 </html>
