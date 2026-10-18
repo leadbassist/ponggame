@@ -12,19 +12,12 @@ const eyebrowElement = document.querySelector('#overlay-eyebrow');
 const titleElement = document.querySelector('#overlay-title');
 const copyElement = document.querySelector('#overlay-copy');
 const startButton = document.querySelector('#start-button');
-const pauseButton = document.querySelector('#pause-button');
-const restartButton = document.querySelector('#restart-button');
-const menuButton = document.querySelector('#menu-button');
 const gameStatusLabel = document.querySelector('#game-status-label');
 const godPanel = document.querySelector('#god-panel');
-const guideButton = document.querySelector('#guide-button');
-const guideModal = document.querySelector('#guide');
 const guideList = document.querySelector('#guide-list');
-const guideClose = document.querySelector('#guide-close');
+const powerupsTab = document.querySelector('#tab-powerups');
 const entryBox = document.querySelector('#entry');
 const entryInput = document.querySelector('#entry-input');
-const wordmarkIcon = document.querySelector('.wordmark-icon');
-const brandElement = document.querySelector('#brand-a');
 
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
@@ -168,8 +161,6 @@ function applyTheme(name) {
   for (const [key, value] of Object.entries(theme.palette)) {
     document.documentElement.style.setProperty(`--c-${key}`, value);
   }
-  wordmarkIcon.textContent = theme.mark;
-  brandElement.textContent = theme.brand;
   const welcomeBrand = document.querySelector('#welcome-brand');
   if (welcomeBrand) welcomeBrand.textContent = theme.brand;
   writeStorage(THEME_KEY, themeName);
@@ -286,7 +277,6 @@ function showOverlay(eyebrow, title, copy, buttonLabel, visible = true) {
 
 function setState(nextState) {
   state = nextState;
-  pauseButton.disabled = nextState !== 'playing' && nextState !== 'paused';
   const statusLabels = {
     intro: 'READY',
     ready: 'SERVE',
@@ -305,7 +295,7 @@ function setState(nextState) {
   } else if (nextState === 'ready') {
     showOverlay('BALL SERVED', 'BACK<br><span>IN PLAY</span>', 'The next serve is yours.<br>Keep the ball in the air.', 'CONTINUE');
   } else if (nextState === 'paused') {
-    showOverlay('GAME PAUSED', 'TAKE A<br><span>BREATHER</span>', 'Your run is right where you left it.', 'RESUME GAME');
+    showOverlay('GAME PAUSED', 'TAKE A<br><span>BREATHER</span>', 'Your run is right where you left it.<br>Press M for the menu.', 'RESUME GAME');
   } else if (nextState === 'levelclear') {
     showOverlay('GRID CLEARED', 'NICE<br><span>WORK</span>', `Stage ${String(level).padStart(2, '0')} is clear.<br>A new grid awaits.`, 'NEXT STAGE');
   } else if (nextState === 'entry') {
@@ -768,7 +758,7 @@ function animate(timestamp) {
     if (state === 'playing') update(delta);
     render();
   }
-  if (!guideModal.hidden) renderGuide();
+  if (welcomeOpen && !powerupsTab.hidden) renderGuide();
   window.requestAnimationFrame(animate);
 }
 
@@ -797,20 +787,11 @@ function renderGuide() {
   }
 }
 
-function setGuideOpen(open) {
-  guideModal.hidden = !open;
-  if (open && state === 'playing') togglePause();
-}
-
 // Input -------------------------------------------------------------------
 
 function handleKeyDown(event) {
   if (event.target instanceof HTMLInputElement) return;
   const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-  if (!guideModal.hidden) {
-    if (key === 'Escape') setGuideOpen(false);
-    return;
-  }
 
   // Secret: type "godmode" to toggle; while on, N completes the stage.
   if (key.length === 1 && !event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey) {
@@ -823,7 +804,15 @@ function handleKeyDown(event) {
   }
 
   if (welcomeOpen) {
-    if (key === 'Escape') showView('main');
+    if (key === 'Escape') {
+      if (!views.main.hidden && runActive) hideWelcome();
+      else goBack();
+    }
+    return;
+  }
+
+  if (key === 'm' && !event.repeat && !codeBuffer.endsWith('godm')) {
+    showWelcome();
     return;
   }
 
@@ -861,14 +850,6 @@ entryInput.addEventListener('input', () => {
 entryInput.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') submitEntry();
 });
-pauseButton.addEventListener('click', togglePause);
-guideButton.addEventListener('click', () => setGuideOpen(true));
-guideClose.addEventListener('click', () => setGuideOpen(false));
-guideModal.addEventListener('pointerdown', (event) => {
-  if (event.target === guideModal) setGuideOpen(false);
-});
-restartButton.addEventListener('click', startNewGame);
-menuButton.addEventListener('click', () => showWelcome());
 window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('keyup', handleKeyUp);
 window.addEventListener('blur', () => heldKeys.clear());

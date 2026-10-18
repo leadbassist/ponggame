@@ -18,7 +18,10 @@ const demo = { balls: [], bricks: [], particles: [], time: 0, last: 0 };
 function showView(name) {
   for (const [key, el] of Object.entries(views)) el.hidden = key !== name;
   if (name === 'scores') renderScores();
-  if (name === 'options') renderThemes();
+  if (name === 'options') {
+    showOptionsSection(null);
+    renderThemes();
+  }
   if (name === 'main') resumeButton.hidden = !runActive;
 }
 
@@ -194,8 +197,35 @@ document.querySelector('#welcome-start').addEventListener('click', () => {
 resumeButton.addEventListener('click', hideWelcome);
 document.querySelector('#welcome-scores').addEventListener('click', () => showView('scores'));
 document.querySelector('#welcome-options').addEventListener('click', () => showView('options'));
+const optionsTitle = document.querySelector('#options-title');
+const optionsMenu = document.querySelector('#options-menu');
+const optionsDetail = document.querySelector('#options-detail');
+const optionsTitles = { theme: 'THEME', controls: 'CONTROLS', bricks: 'BRICKS', powerups: 'POWER-UPS' };
+let optionsSection = null;
+
+// Options is a vertical list of sections; picking one shows only that section's details.
+function showOptionsSection(name) {
+  optionsSection = name;
+  optionsMenu.hidden = Boolean(name);
+  optionsDetail.hidden = !name;
+  optionsTitle.textContent = name ? optionsTitles[name] : 'OPTIONS';
+  document.querySelectorAll('.tab-panel').forEach((panel) => {
+    panel.hidden = panel.id !== `tab-${name}`;
+  });
+  optionsDetail.scrollTop = 0;
+}
+
+function goBack() {
+  if (!views.options.hidden && optionsSection) showOptionsSection(null);
+  else showView('main');
+}
+
 document.querySelectorAll('[data-back]').forEach((button) => {
   button.addEventListener('click', () => showView('main'));
+});
+document.querySelector('#options-back').addEventListener('click', goBack);
+document.querySelectorAll('[data-section]').forEach((button) => {
+  button.addEventListener('click', () => showOptionsSection(button.dataset.section));
 });
 
 showWelcome();

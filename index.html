@@ -11,28 +11,7 @@
 </head>
 <body>
   <main class="arcade">
-    <header class="masthead">
-      <a class="wordmark" href="./" aria-label="Brick Breaker home">
-        <span class="wordmark-icon" aria-hidden="true">N</span>
-        <span><span id="brand-a">BRICK</span><span class="wordmark-accent">BREAKER</span></span>
-      </a>
-      <span class="edition">ARCADE EDITION <span class="status-dot"></span></span>
-    </header>
-
     <section class="game-layout" aria-label="Brick Breaker arcade game">
-      <aside class="side-panel left-panel" aria-label="Game information">
-        <div class="panel-label">MISSION</div>
-        <p class="mission-copy">Clear the grid.<br>Keep the ball alive.</p>
-        <div class="panel-rule"></div>
-        <div class="panel-label">CONTROLS</div>
-        <div class="control-row"><span class="keycap">←</span><span class="keycap">→</span><span>Move paddle</span></div>
-        <div class="control-row"><span class="keycap wide-key">SPACE</span><span>Launch / release</span></div>
-        <div class="control-row"><span class="keycap">P</span><span class="keycap">ESC</span><span>Pause</span></div>
-        <div class="control-row"><span class="keycap">A</span><span class="keycap">D</span><span>Move paddle</span></div>
-        <div class="panel-rule"></div>
-        <p class="touch-hint">Keyboard only: the bat does not follow the mouse.</p>
-      </aside>
-
       <div class="machine">
         <div class="machine-top">
           <span class="machine-caption">PLAYER 01</span>
@@ -52,49 +31,18 @@
               <p id="overlay-copy">A fresh run. A wall of trouble.<br>How far can you get?</p>
               <div class="entry" id="entry" hidden><input id="entry-input" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Your 3 initials" placeholder="AAA"></div>
               <button class="start-button" id="start-button" type="button">START GAME <span aria-hidden="true">↗</span></button>
-              <span class="overlay-foot">PRESS SPACE OR TAP TO PLAY</span>
+              <span class="overlay-foot" id="overlay-foot">PRESS SPACE TO PLAY &nbsp;·&nbsp; M FOR MENU</span>
             </div>
           </section>
         </div>
         <div class="machine-bottom">
           <span>★ <span id="best-score">BEST 000000</span></span>
-          <span>BUILT FOR ONE MORE ROUND</span>
+          <span>P / ESC PAUSE</span>
         </div>
       </div>
-
-      <aside class="side-panel right-panel" aria-label="Game options">
-        <div class="panel-label">FIELD NOTES</div>
-        <div class="legend-item"><span class="brick-swatch swatch-coral"></span><span>Standard block</span></div>
-        <div class="legend-item"><span class="brick-swatch swatch-gold"></span><span>Reinforced block</span></div>
-        <div class="legend-item"><span class="brick-swatch swatch-violet"></span><span>Armored (3 hits)</span></div>
-        <div class="legend-item"><span class="brick-swatch swatch-blue"></span><span>Bonus block</span></div>
-        <div class="legend-item"><span class="brick-swatch swatch-green"></span><span>? Drops an item</span></div>
-        <div class="legend-item"><span class="brick-swatch swatch-orange"></span><span>✱ Explosive</span></div>
-        <div class="panel-rule"></div>
-        <p class="side-copy">Catch power-ups with the bat. They last until you clear the stage or lose a life. Half of them are bad, so choose your catches! 50 stages to win.</p>
-        <div class="panel-rule"></div>
-        <div class="panel-label">SESSION</div>
-        <button class="utility-button" id="menu-button" type="button">⌂ <span>MENU</span></button>
-        <button class="utility-button" id="guide-button" type="button">★ <span>POWER-UPS</span></button>
-        <button class="utility-button" id="pause-button" type="button" aria-label="Pause game" disabled>Ⅱ <span>PAUSE</span></button>
-        <button class="utility-button" id="restart-button" type="button">↻ <span>RESTART</span></button>
-      </aside>
     </section>
-
-    <footer class="page-footer"><span>NO QUARTERS REQUIRED</span><span>◈ &nbsp; TAKE A BREATH. THEN BREAK A FEW MORE.</span></footer>
   </main>
-  <div class="guide" id="guide" hidden>
-    <div class="guide-card" role="dialog" aria-label="Power-ups guide">
-      <div class="guide-head"><span>POWER-UPS</span><button class="utility-button guide-close" id="guide-close" type="button">✕ <span>CLOSE</span></button></div>
-      <div id="guide-list"></div>
-    </div>
-  </div>
-  <div class="god-panel" id="god-panel" hidden>
-    <div class="god-title">GOD MODE ON</div>
-    <div><span class="keycap">N</span> Complete stage, then SPACE for next</div>
-    <div>∞ Unlimited lives</div>
-    <div>Type <b>godmode</b> to turn OFF</div>
-  </div>
+
   <div class="welcome" id="welcome" hidden>
     <canvas id="welcome-bg"></canvas>
     <div class="welcome-body">
@@ -110,12 +58,48 @@
         <ol class="score-list" id="score-list"></ol>
         <button class="menu-button" type="button" data-back>BACK</button>
       </div>
-      <div class="menu-view" id="view-options" hidden>
-        <h2>THEME</h2>
-        <div class="theme-list" id="theme-list"></div>
-        <button class="menu-button" type="button" data-back>BACK</button>
+      <div class="menu-view options-view" id="view-options" hidden>
+        <h2 id="options-title">OPTIONS</h2>
+        <div class="options-menu" id="options-menu">
+          <button class="menu-button" type="button" data-section="theme">THEME</button>
+          <button class="menu-button" type="button" data-section="controls">CONTROLS</button>
+          <button class="menu-button" type="button" data-section="bricks">BRICKS</button>
+          <button class="menu-button" type="button" data-section="powerups">POWER-UPS</button>
+        </div>
+        <div class="tab-panels" id="options-detail" hidden>
+          <div class="tab-panel" id="tab-theme" hidden>
+            <div class="theme-list" id="theme-list"></div>
+          </div>
+          <div class="tab-panel" id="tab-controls" hidden>
+            <p class="mission-copy">Clear the grid.<br>Keep the ball alive.</p>
+            <div class="control-row"><span class="keycap">←</span><span class="keycap">→</span><span class="keycap">A</span><span class="keycap">D</span><span>Move the bat</span></div>
+            <div class="control-row"><span class="keycap wide-key">SPACE</span><span>Launch the ball / release a stuck ball</span></div>
+            <div class="control-row"><span class="keycap">P</span><span class="keycap">ESC</span><span>Pause / resume</span></div>
+            <div class="control-row"><span class="keycap">M</span><span>Open this menu (pauses the game)</span></div>
+            <p class="side-copy">Keyboard only: the bat does not follow the mouse or touch.</p>
+          </div>
+          <div class="tab-panel" id="tab-bricks" hidden>
+            <div class="legend-item"><span class="brick-swatch swatch-coral"></span><span>Standard block</span></div>
+            <div class="legend-item"><span class="brick-swatch swatch-gold"></span><span>Reinforced block (2 hits)</span></div>
+            <div class="legend-item"><span class="brick-swatch swatch-violet"></span><span>Armored block (3 hits)</span></div>
+            <div class="legend-item"><span class="brick-swatch swatch-blue"></span><span>Bonus block (extra points)</span></div>
+            <div class="legend-item"><span class="brick-swatch swatch-green"></span><span>? Drops a power-up</span></div>
+            <div class="legend-item"><span class="brick-swatch swatch-orange"></span><span>✱ Explosive (breaks neighbors)</span></div>
+            <p class="side-copy">Catch power-ups with the bat. They last until you clear the stage or lose a life. Half of them are bad, so choose your catches! 50 stages to win.</p>
+          </div>
+          <div class="tab-panel" id="tab-powerups" hidden>
+            <div id="guide-list"></div>
+          </div>
+        </div>
+        <button class="menu-button" type="button" id="options-back">BACK</button>
       </div>
     </div>
+  </div>
+  <div class="god-panel" id="god-panel" hidden>
+    <div class="god-title">GOD MODE ON</div>
+    <div><span class="keycap">N</span> Complete stage, then SPACE for next</div>
+    <div>∞ Unlimited lives</div>
+    <div>Type <b>godmode</b> to turn OFF</div>
   </div>
   <script src="levels.js"></script>
   <script src="themes.js"></script>

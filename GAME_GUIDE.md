@@ -24,7 +24,7 @@ There are no dependencies. The only browser features relied on are Canvas 2D (in
 ## 2. File layout
 
 ```
-index.html    Markup: header, side panels, game canvas, overlay, welcome screen, guide modal, god panel
+index.html    Markup: game area, welcome screen (menu / scores / tabbed options), god panel
 style.css     All page styling, incl. per-theme CSS overrides (body[data-theme=...])
 levels.js     The 50 level layouts (grid data only)
 themes.js     Theme definitions + ALL canvas drawing code (bricks, bat, ball, icons, backdrop)
@@ -123,7 +123,8 @@ Bricks do **not** store a color. `brickColor(brick)` derives it from the brick's
 | `←` / `→` or `A` / `D` | Move bat |
 | `Space` | Launch the ball / start; release a stuck ball (Sticky Bat); otherwise pause/resume |
 | `P` or `Esc` | Pause / resume |
-| `Esc` (menus) | Back to the welcome main menu; closes the power-ups guide |
+| `Esc` (menus) | Back to the welcome main menu; from the main menu, back to the running game |
+| `M` | Open the menu (pauses the game) |
 | `Enter` | Confirm initials in the high-score box |
 | Typing `godmode` | Toggle god mode (see section 8) |
 
@@ -211,7 +212,7 @@ Each entry has `name`, `good`, `color` (a **palette key**, not a hex value), `we
 
 ### 5.5 Power-ups guide
 
-The **POWER-UPS** button opens a modal (`#guide`) listing all 12 with an animated icon, a GOOD/BAD tag and the `info` text. It is built from `ITEM_TYPES`, so a new power-up appears there automatically. Opening it pauses a running game. Icons are drawn with `drawItemIcon` into 64×64 canvases.
+The **POWER-UPS** tab in Options lists all 12 with an animated icon, a GOOD/BAD tag and the `info` text. It is built from `ITEM_TYPES`, so a new power-up appears there automatically. Icons are drawn with `drawItemIcon` into 64×64 canvases, redrawn each frame while the tab is visible.
 
 ### 5.6 Adding a new power-up
 
@@ -227,17 +228,22 @@ The **POWER-UPS** button opens a modal (`#guide`) listing all 12 with an animate
 
 ### 6.1 Welcome screen (`#welcome`, `welcome.js`)
 
-Shown on load and from the **MENU** button. It sits above the game and has an animated background canvas (`#welcome-bg`): about 7 balls with trails bounce off the walls and a field of random bricks drawn in the current theme. Hits reduce brick hits, spawn particles, and destroyed bricks respawn after 4–8 s with a fade-in. It re-lays out on window resize.
+Shown on load and when you press **M** during a game. It sits above the game and has an animated background canvas (`#welcome-bg`): about 7 balls with trails bounce off the walls and a field of random bricks drawn in the current theme. Hits reduce brick hits, spawn particles, and destroyed bricks respawn after 4–8 s with a fade-in. It re-lays out on window resize.
 
-Buttons: **Start Game** (starts a fresh run), **High Scores**, **Options**, plus **Resume Game** (only shown when a run is active). The three sub-views (`#view-main`, `#view-scores`, `#view-options`) are toggled by `showView(name)`. `Esc` returns to the main view. Opening the welcome screen from a running game pauses it.
+Buttons: **Start Game** (starts a fresh run, so this is also how you restart), **High Scores**, **Options**, plus **Resume Game** (only shown when a run is active). The sub-views (`#view-main`, `#view-scores`, `#view-options`) are toggled by `showView(name)`. `Esc` goes back to the main view, and from the main view returns to a running game. Opening the welcome screen from a running game pauses it.
+
+**Options** is a vertical list of buttons. Clicking one opens just that section (`showOptionsSection` in `welcome.js`); BACK or `Esc` returns to the list, and again to the main menu:
+
+| Section | Content |
+|---|---|
+| THEME | The four theme cards |
+| CONTROLS | Mission text and all keys |
+| BRICKS | Brick legend (swatches use the `--c-*` theme colors) and tips |
+| POWER-UPS | The animated power-up guide (`#guide-list`, built from `ITEM_TYPES`) |
 
 ### 6.2 Main game screen
 
-- **Header** — wordmark ("BRICK BREAKER") with a theme icon.
-- **Left panel** — mission text and control keys; keyboard-only note.
-- **Center "machine"** — status label, HUD (score, stage, lives), the canvas with its overlay, and best score.
-- **Right panel** — brick legend, tips, and the SESSION buttons: **MENU**, **POWER-UPS**, **PAUSE**, **RESTART**.
-- **God panel** — only when god mode is on (see section 8).
+Only the game area is shown, with nothing around it: the "machine" containing the status label, HUD (score, stage, lives), the canvas with its overlay, and the best score. It is sized to fit the window height. The **god panel** appears only when god mode is on (see section 8). There are no on-screen buttons; use **M** for the menu and **P/Esc** to pause.
 
 The overlay (`#overlay`) is a single card whose text is rewritten by `setState`. Clicking it (pointerdown on the dimmed area) or pressing Space starts/resumes.
 
@@ -341,7 +347,7 @@ Access is wrapped in `readStorage` / `writeStorage` with try/catch, so the game 
 | Run control | `resetRun`, `startNewGame`, `placeBallOnPaddle`, `startOrResume`, `completeLevel`, `togglePause`, `addScore`, `loseLife` |
 | Simulation | `movePaddleWithKeys`, `moveBall`, `destroyBrick`, `circleHitsRectangle`, `burst`, `update` |
 | Render | `drawNet`, `drawEffects`, `render`, `animate` |
-| Guide | `buildGuide`, `renderGuide`, `setGuideOpen` |
+| Guide | `buildGuide`, `renderGuide` |
 | Input | `handleKeyDown`, `handleKeyUp`, DOM listeners at the bottom |
 
 ### `themes.js`
