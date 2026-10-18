@@ -5,31 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080b17">
   <meta name="description" content="A neon-soaked arcade brick breaker.">
-  <title>Neon Breaker — Arcade</title>
+  <title>Brick Breaker — Arcade</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="arcade">
     <header class="masthead">
-      <a class="wordmark" href="./" aria-label="Neon Breaker home">
+      <a class="wordmark" href="./" aria-label="Brick Breaker home">
         <span class="wordmark-icon" aria-hidden="true">N</span>
-        <span>NEON<span class="wordmark-accent">BREAKER</span></span>
+        <span><span id="brand-a">BRICK</span><span class="wordmark-accent">BREAKER</span></span>
       </a>
       <span class="edition">ARCADE EDITION <span class="status-dot"></span></span>
     </header>
 
-    <section class="game-layout" aria-label="Neon Breaker arcade game">
+    <section class="game-layout" aria-label="Brick Breaker arcade game">
       <aside class="side-panel left-panel" aria-label="Game information">
         <div class="panel-label">MISSION</div>
         <p class="mission-copy">Clear the grid.<br>Keep the ball alive.</p>
         <div class="panel-rule"></div>
         <div class="panel-label">CONTROLS</div>
         <div class="control-row"><span class="keycap">←</span><span class="keycap">→</span><span>Move paddle</span></div>
-        <div class="control-row"><span class="keycap wide-key">SPACE</span><span>Launch / pause</span></div>
+        <div class="control-row"><span class="keycap wide-key">SPACE</span><span>Launch / release</span></div>
+        <div class="control-row"><span class="keycap">P</span><span class="keycap">ESC</span><span>Pause</span></div>
         <div class="control-row"><span class="keycap">A</span><span class="keycap">D</span><span>Move paddle</span></div>
         <div class="panel-rule"></div>
-        <p class="touch-hint">Touch or drag on the playfield to move.</p>
+        <p class="touch-hint">Keyboard only: the bat does not follow the mouse.</p>
       </aside>
 
       <div class="machine">
@@ -49,6 +50,7 @@
               <div class="overlay-eyebrow" id="overlay-eyebrow">INSERT COIN</div>
               <h1 id="overlay-title">BREAK<br><span>THE GRID</span></h1>
               <p id="overlay-copy">A fresh run. A wall of trouble.<br>How far can you get?</p>
+              <div class="entry" id="entry" hidden><input id="entry-input" maxlength="3" autocomplete="off" spellcheck="false" aria-label="Your 3 initials" placeholder="AAA"></div>
               <button class="start-button" id="start-button" type="button">START GAME <span aria-hidden="true">↗</span></button>
               <span class="overlay-foot">PRESS SPACE OR TAP TO PLAY</span>
             </div>
@@ -64,11 +66,16 @@
         <div class="panel-label">FIELD NOTES</div>
         <div class="legend-item"><span class="brick-swatch swatch-coral"></span><span>Standard block</span></div>
         <div class="legend-item"><span class="brick-swatch swatch-gold"></span><span>Reinforced block</span></div>
+        <div class="legend-item"><span class="brick-swatch swatch-violet"></span><span>Armored (3 hits)</span></div>
         <div class="legend-item"><span class="brick-swatch swatch-blue"></span><span>Bonus block</span></div>
+        <div class="legend-item"><span class="brick-swatch swatch-green"></span><span>? Drops an item</span></div>
+        <div class="legend-item"><span class="brick-swatch swatch-orange"></span><span>✱ Explosive</span></div>
         <div class="panel-rule"></div>
-        <p class="side-copy">Reinforced blocks take two hits. Clear every block to unlock the next stage.</p>
+        <p class="side-copy">Catch power-ups with the bat. They last until you clear the stage or lose a life. Half of them are bad, so choose your catches! 50 stages to win.</p>
         <div class="panel-rule"></div>
         <div class="panel-label">SESSION</div>
+        <button class="utility-button" id="menu-button" type="button">⌂ <span>MENU</span></button>
+        <button class="utility-button" id="guide-button" type="button">★ <span>POWER-UPS</span></button>
         <button class="utility-button" id="pause-button" type="button" aria-label="Pause game" disabled>Ⅱ <span>PAUSE</span></button>
         <button class="utility-button" id="restart-button" type="button">↻ <span>RESTART</span></button>
       </aside>
@@ -76,6 +83,43 @@
 
     <footer class="page-footer"><span>NO QUARTERS REQUIRED</span><span>◈ &nbsp; TAKE A BREATH. THEN BREAK A FEW MORE.</span></footer>
   </main>
+  <div class="guide" id="guide" hidden>
+    <div class="guide-card" role="dialog" aria-label="Power-ups guide">
+      <div class="guide-head"><span>POWER-UPS</span><button class="utility-button guide-close" id="guide-close" type="button">✕ <span>CLOSE</span></button></div>
+      <div id="guide-list"></div>
+    </div>
+  </div>
+  <div class="god-panel" id="god-panel" hidden>
+    <div class="god-title">GOD MODE ON</div>
+    <div><span class="keycap">N</span> Complete stage, then SPACE for next</div>
+    <div>∞ Unlimited lives</div>
+    <div>Type <b>godmode</b> to turn OFF</div>
+  </div>
+  <div class="welcome" id="welcome" hidden>
+    <canvas id="welcome-bg"></canvas>
+    <div class="welcome-body">
+      <h1 class="welcome-title"><span id="welcome-brand">BRICK</span><span class="wordmark-accent">BREAKER</span></h1>
+      <div class="menu-view" id="view-main">
+        <button class="menu-button" id="welcome-resume" type="button" hidden>RESUME GAME</button>
+        <button class="menu-button" id="welcome-start" type="button">START GAME</button>
+        <button class="menu-button" id="welcome-scores" type="button">HIGH SCORES</button>
+        <button class="menu-button" id="welcome-options" type="button">OPTIONS</button>
+      </div>
+      <div class="menu-view" id="view-scores" hidden>
+        <h2>HIGH SCORES</h2>
+        <ol class="score-list" id="score-list"></ol>
+        <button class="menu-button" type="button" data-back>BACK</button>
+      </div>
+      <div class="menu-view" id="view-options" hidden>
+        <h2>THEME</h2>
+        <div class="theme-list" id="theme-list"></div>
+        <button class="menu-button" type="button" data-back>BACK</button>
+      </div>
+    </div>
+  </div>
+  <script src="levels.js"></script>
+  <script src="themes.js"></script>
   <script src="script.js"></script>
+  <script src="welcome.js"></script>
 </body>
 </html>
